@@ -148,32 +148,6 @@ def load_config():
     config.read(configfile)
     # Check if any sections missing from config and exit if there is
     try:
-        # check if env var for auth token and use that
-        try:
-            configsettings['auth_token'] = os.environ['DISKOVER_AUTH_TOKEN']
-        except KeyError:
-            try:
-                configsettings['auth_token'] = config.get('diskoverspace.com', 'auth_token')
-            except ConfigParser.NoOptionError:
-                print('ERROR: Can\'t find auth token, check config or env var is set.')
-                print('See https://github.com/shirosaidev/diskover/wiki/Auth-token')
-                sys.exit(1)
-        # verify auth token
-        auth_token = configsettings['auth_token']
-        if auth_token == "":
-            print('ERROR: Can\'t find auth token, check config or env var is set.')
-            print('See https://github.com/shirosaidev/diskover/wiki/Auth-token')
-            sys.exit(1)
-        payload = {'token': auth_token}
-        r = requests.get('https://diskoverspace.com/diskover/verifytoken.php', params=payload)
-        if r.status_code != 200:
-            print('ERROR: Issue verifying token, status %s' % r.status_code)
-            print('See https://github.com/shirosaidev/diskover/wiki/Auth-token')
-            sys.exit(1)
-        if auth_token.encode('utf-8') not in r.content:
-            print('ERROR: Issue verifying token caused by %s' % r.text)
-            print('See https://github.com/shirosaidev/diskover/wiki/Auth-token')
-            sys.exit(1)
         try:
             d = config.get('excludes', 'dirs')
             dirs = d.split(',')
@@ -1978,7 +1952,6 @@ def upload_stats():
     """
     index = cliargs['index']
     path = cliargs['rootdir']
-    token = config['auth_token']
     es.indices.refresh(index)
     dir_count = es.count(index=index, doc_type='directory', body={'query': { 'match_all': {} }})['count']
     file_count = es.count(index=index, doc_type='file', body={'query': { 'match_all': {} }})['count']
@@ -1994,7 +1967,7 @@ def upload_stats():
     size = es.search(index=index, doc_type='directory', body=body)['hits']['hits'][0]['_source']['filesize']
     size_tb = size/1024/1024/1024/1024
 
-    data = {'token': token, 'dirs': dir_count, 'files': file_count, 'size': size_tb}
+    data = {'dirs': dir_count, 'files': file_count, 'size': size_tb}
     r = requests.post('https://diskoverspace.com/diskover/uploadstats.php', data=data)
 
 

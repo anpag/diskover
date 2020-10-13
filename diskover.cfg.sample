@@ -1,12 +1,6 @@
 ; diskover config file
 ; if you make any changes, restart worker bots so they get the new config
 
-[diskoverspace.com]
-; you need to create an account on diskoverspace.com and get your auth token before you can run diskover
-; can also set DISKOVER_AUTH_TOKEN env var
-; see https://github.com/shirosaidev/diskover/wiki/Auth-token
-auth_token = 
-
 [excludes]
 ; directory names and absolute paths you want to exclude from crawl, case-sensitive, can include wildcards (.* or backup* or /dir/dirname* or *tmp or *tmp* etc)
 dirs = .*,.snapshot,.Snapshot,.zfs
