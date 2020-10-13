@@ -1946,31 +1946,6 @@ def tune_es_for_crawl(defaults=False):
                 pass
 
 
-def upload_stats():
-    """This is the upload stats function.
-    It uploads num of files, dirs, tb crawled to diskoverspace.com.
-    """
-    index = cliargs['index']
-    path = cliargs['rootdir']
-    es.indices.refresh(index)
-    dir_count = es.count(index=index, doc_type='directory', body={'query': { 'match_all': {} }})['count']
-    file_count = es.count(index=index, doc_type='file', body={'query': { 'match_all': {} }})['count']
-    body = {
-        'query': {
-            'query_string': {
-                'query': 'filename: "%s" AND path_parent: "%s"' % (
-                    os.path.basename(path), 
-                    os.path.abspath(os.path.join(path, os.pardir)))
-            }
-        }
-    }
-    size = es.search(index=index, doc_type='directory', body=body)['hits']['hits'][0]['_source']['filesize']
-    size_tb = size/1024/1024/1024/1024
-
-    data = {'dirs': dir_count, 'files': file_count, 'size': size_tb}
-    r = requests.post('https://diskoverspace.com/diskover/uploadstats.php', data=data)
-
-
 def post_crawl_tasks():
     """This is the post crawl tasks function.
     It runs at the end of the crawl and does post tasks.
@@ -1997,9 +1972,6 @@ def post_crawl_tasks():
 
     # set Elasticsearch index settings back to default
     tune_es_for_crawl(defaults=True)
-
-    # upload stats to diskoverspace.com
-    upload_stats()
 
 
 def pre_crawl_tasks():
