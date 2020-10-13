@@ -3,6 +3,7 @@
 # [1.5.1.0p] - 2020-10-13
 ### removed
 - auth token verification
+- telemetry
 
 # [1.5.1.0] - 2020-05-25
 ### added
