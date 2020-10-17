@@ -12,7 +12,7 @@ LICENSE for the full license text.
 """
 
 try:
-    from elasticsearch5 import Elasticsearch, helpers, RequestsHttpConnection, \
+    from elasticsearch7 import Elasticsearch, helpers, RequestsHttpConnection, \
         Urllib3HttpConnection, exceptions
 except ImportError:
     try:
