@@ -1,4 +1,4 @@
-elasticsearch>=7.0.0
+elasticsearch==7.9.1
 requests==2.22.0
 scandir==1.10.0
 progressbar2==3.42.0
